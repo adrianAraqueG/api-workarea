@@ -1,147 +1,40 @@
-const express = require("express");
-const bodyParser = require('body-parser');
+// -- Imports
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+
+import router from './routes/index.js';
+
+
+// -- Iniciar express
 const app = express();
-const cors =  require('cors');
 
+
+
+// -- Configuraciones
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({
-    origin: 'http://127.0.0.1:5500/'
-}));
-app.use(cors());
-
-let usuario = {
-    nombre:'',
-    apellido: ''
-};
-
-let respuesta = {
-    error: false,
-    codigo: 200,
-    mensaje: ''
-};
-
-app.get('/', function(req, res) {
-    respuesta = {
-        error: true,
-        codigo: 200,
-        mensaje: 'Punto de inicio'
-    };
-
-    res.send(respuesta);
-});
-
-app.route('/usuario')
-    .get((req, res) => {
-        respuesta = {
-            error: false,
-            codigo: 200,
-            mensaje: ''
-        };
-        if(usuario.nombre === '' || usuario.apellido === '') {
-            respuesta = {
-                error: true,
-                codigo: 501,
-                mensaje: 'El usuario no ha sido creado'
-            };
-        }else{
-            respuesta = {
-                error: false,
-                codigo: 200,
-                mensaje: 'respuesta del usuario',
-                respuesta: usuario
-            };
-        }
-        console.log(req);
-        res.send(respuesta);
-    })
-    .post(( req, res) =>{
-
-        console.log(req.body);
-
-        if(!req.body.nombre || !req.body.apellido) {
-            respuesta = {
-                error: true,
-                codigo: 502,
-                mensaje: 'El campo nombre y apellido son requeridos'
-            };
-        } else {
-            if(usuario.nombre !== '' || usuario.apellido !== '') {
-                respuesta = {
-                    error: true,
-                    codigo: 503,
-                    mensaje: 'El usuario ya fue creado previamente'
-                };
-            } else {
-                usuario = {
-                    nombre: req.body.nombre,
-                    apellido: req.body.apellido
-                };
-                respuesta = {
-                    error: false,
-                    codigo: 200,
-                    mensaje: 'Usuario creado',
-                    respuesta: usuario
-                };
-            }
-        }
-        console.log(req);
-        res.send(usuario);
-    })
-    .put((req, res) =>{
-        if(!req.body.nombre || !req.body.apellido) {
-            respuesta = {
-                error: true,
-                codigo: 502,
-                mensaje: 'El campo nombre y apellido son requeridos'
-            };
-        } else {
-            if(usuario.nombre === '' || usuario.apellido === '') {
-                respuesta = {
-                    error: true,
-                    codigo: 501,
-                    mensaje: 'El usuario no ha sido creado'
-                };
-            } else {
-                usuario = {
-                    nombre: req.body.nombre,
-                    apellido: req.body.apellido
-                };
-                respuesta = {
-                    error: false,
-                    codigo: 200,
-                    mensaje: 'Usuario actualizado',
-                    respuesta: usuario
-                };
-            }
-        }
-    
-        res.send(respuesta);
-    })
-    .delete((req, res) =>{
-        if(usuario.nombre === '' || usuario.apellido === '') {
-            respuesta = {
-                error: true,
-                codigo: 501,
-                mensaje: 'El usuario no ha sido creado'
-            };
-        } else {
-            respuesta = {
-                error: false,
-                codigo: 200,
-                mensaje: 'Usuario eliminado'
-            };
-            usuario = { 
-                nombre: '', 
-                apellido: '' 
-            };
-        }
-
-        res.send(respuesta);
-    });
+app.use(bodyParser.json());
+app.use(cors({
+    origin: 'http://127.0.0.1:5500'
+}))
 
 
+
+
+// -- Usar el router
+app.use(router);
+
+
+
+
+
+
+
+
+
+// 404
 app.use(function(req, res, next) {
-    respuesta = {
+    let respuesta = {
     error: true, 
     codigo: 404, 
     mensaje: 'URL no encontrada'
@@ -149,9 +42,6 @@ app.use(function(req, res, next) {
 
     res.status(404).send(respuesta);
 });
-
-
-
 
 app.listen(3000, () => {
     console.log("El servidor está inicializado en el puerto 3000");
