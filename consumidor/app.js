@@ -8,6 +8,7 @@ const data = {
 async function consultarAPI(){
     fetch(url, {
         method: 'POST',
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/json',
         },

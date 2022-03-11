@@ -4,7 +4,9 @@ const app = express();
 const cors =  require('cors');
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    origin: 'http://127.0.0.1:5500/'
+}));
 app.use(cors());
 
 let usuario = {
@@ -28,7 +30,7 @@ app.get('/', function(req, res) {
     res.send(respuesta);
 });
 
-app.route('/usuario',)
+app.route('/usuario')
     .get((req, res) => {
         respuesta = {
             error: false,
@@ -49,10 +51,10 @@ app.route('/usuario',)
                 respuesta: usuario
             };
         }
-
+        console.log(req);
         res.send(respuesta);
     })
-    .post((req, res) =>{
+    .post(( req, res) =>{
 
         console.log(req.body);
 
@@ -82,8 +84,8 @@ app.route('/usuario',)
                 };
             }
         }
-    
-        res.send(respuesta);
+        console.log(req);
+        res.send(usuario);
     })
     .put((req, res) =>{
         if(!req.body.nombre || !req.body.apellido) {
